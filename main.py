@@ -2,7 +2,7 @@ import os
 import uuid
 from flask import Flask, request, render_template, session
 from werkzeug.utils import secure_filename
-from dotenv import load_dotenv  # Import dotenv to load .env file
+from dotenv import load_dotenv 
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -12,11 +12,11 @@ from langchain_community.llms import Together
 from langchain.chains import RetrievalQA
 from sentence_transformers import SentenceTransformer, util
 
-# Load environment variables from .env file
+
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")  # Use secret key from .env file
+app.secret_key = os.getenv("SECRET_KEY")  
 app.config["UPLOAD_FOLDER"] = "uploads"
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
@@ -27,12 +27,11 @@ def index():
     if request.method == "POST":
         uploaded_file = request.files["pdf"]
         if uploaded_file.filename.endswith(".pdf"):
-            # Save file
+
             filename = secure_filename(uploaded_file.filename)
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             uploaded_file.save(filepath)
 
-            # Load and process PDF
             loader = PyPDFLoader(filepath)
             pages = loader.load()
 
@@ -93,13 +92,13 @@ def check_answer():
 
     model_answer = qa_chain.invoke(question)["result"]
 
-    # Compare user vs model answer
+    # Comparing
     model_emb = semantic_model.encode(model_answer, convert_to_tensor=True)
     user_emb = semantic_model.encode(user_answer, convert_to_tensor=True)
     similarity = util.cos_sim(model_emb, user_emb).item()
     similarity = round(similarity, 2)
     correct = similarity >= 0.75
-    feedback = "Correct!" if correct else "Not quite. Here's a better answer."
+    feedback = "Correct answer!" if correct else "Not quite correct."
 
     return render_template(
         "index.html",
