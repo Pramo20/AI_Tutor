@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AI Tutor</title>
+  </head>
+  <body>
+    <h2>AI Tutor</h2>
+
+    {% if stage == "upload" %}
+    <form method="POST" enctype="multipart/form-data">
+      <label>Upload your PDF:</label><br />
+      <input type="file" name="pdf" accept=".pdf" required /><br /><br />
+      <input type="submit" value="Generate Question" />
+    </form>
+
+    {% elif stage == "answer" %}
+    <h3>Question Generated from Your PDF:</h3>
+    <p><strong>{{ question }}</strong></p>
+
+    <form action="/check" method="POST">
+      <label>Your Answer:</label><br />
+      <textarea name="answer" rows="5" cols="60" required></textarea
+      ><br /><br />
+      <input type="submit" value="Check My Answer" />
+    </form>
+
+    {% elif stage == "result" %}
+    <h3>Question:</h3>
+    <p><strong>{{ question }}</strong></p>
+
+    <h4>Your Answer:</h4>
+    <p>{{ user_answer }}</p>
+
+    <h4>Model's Answer:</h4>
+    <p>{{ model_answer }}</p>
+
+    <h4>Result:</h4>
+    <p>{{ feedback }} (Similarity: {{ similarity }})</p>
+
+    <a href="/">Try another PDF</a>
+    {% endif %}
+  </body>
+</html>
